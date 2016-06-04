@@ -1,0 +1,21 @@
+{
+    "name": "rootwork/php-sidekick",
+    "description": "A PHP helper library dedicated providing useful one-liners to otherwise common and tedious tasks.",
+    "license": "BSD-3-Clause",
+    "keywords": ["rootwork", "php", "sidekick", "library", "traits", "helpers"],
+    "homepage": "https://github.com/rootworkit/php-sidekick",
+    "authors": [
+        {
+            "name": "Mike Soule",
+            "email": "mike@rootwork.it"
+        }
+    ],
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": { "Rootwork\\Sidekick\\": "src/Sidekick/" }
+    }
+}
