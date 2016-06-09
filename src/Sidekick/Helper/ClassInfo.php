@@ -23,29 +23,38 @@ class ClassInfo
 {
 
     /**
+     * Constants
+     */
+    const CONSTANTS_FORMAT_NAME_NAME    = 'name.name';
+    const CONSTANTS_FORMAT_NAME_VALUE   = 'name.value';
+    const CONSTANTS_FORMAT_VALUE_VALUE  = 'value.value';
+
+    /**
      * Get an array of filtered class constants.
+     *
+     * @param string|object $class
      *
      * @param string        $pattern The pattern to match in the constant name.
      * @param bool|integer  $pos     The exact position where $pattern
-     *                              should appear. false = anywhere
-     * @param string|object $class
+     *                               should appear. false = anywhere
+     * @param string        $format
      *
-     * @return array
+     * @return array <code>
      *
      * <code>
      * class User
      * {
-     *      const ROLE_GUEST    = 'Guest';
-     *      const ROLE_USER     = 'User';
-     *      const ROLE_ADMIN    = 'Admin';
+     * const ROLE_GUEST    = 'Guest';
+     * const ROLE_USER     = 'User';
+     * const ROLE_ADMIN    = 'Admin';
      *
-     *      const FIRST_PLACE   = '1st Place';
-     *      const SECOND_PLACE  = '2nd Place';
-     *      const THIRD_PLACE   = '3rd Place';
+     * const FIRST_PLACE   = '1st Place';
+     * const SECOND_PLACE  = '2nd Place';
+     * const THIRD_PLACE   = '3rd Place';
      *
-     *      const CLASS_ARISTOCRACY = 'Aristocracy';
-     *      const CLASS_PROLETARIAT = 'Proletariat';
-     *      const CLASS_PEASANTRY   = 'Peasantry';
+     * const CLASS_ARISTOCRACY = 'Aristocracy';
+     * const CLASS_PROLETARIAT = 'Proletariat';
+     * const CLASS_PEASANTRY   = 'Peasantry';
      * }
      *
      * var_dump(ClassInfo::getFilteredConstants(User::class, 'ROLE'));
@@ -53,27 +62,29 @@ class ClassInfo
      * var_dump(ClassInfo::getFilteredConstants(User::class, '_PLACE'));
      *
      * Results:
-     *  array(4) {
-     *      'ROLE_GUEST'        => Guest
-     *      'ROLE_USER'         => User
-     *      'ROLE_ADMIN'        => Admin
-     *      'CLASS_PROLETARIAT' => Proletariat
-     *  }
+     * array(4) {
+     * 'ROLE_GUEST'        => Guest
+     * 'ROLE_USER'         => User
+     * 'ROLE_ADMIN'        => Admin
+     * 'CLASS_PROLETARIAT' => Proletariat
+     * }
      *
-     *  array(3) {
-     *      'ROLE_GUEST'    => Guest
-     *      'ROLE_USER'     => User
-     *      'ROLE_ADMIN'    => Admin
-     *  }
+     * array(3) {
+     * 'ROLE_GUEST'    => Guest
+     * 'ROLE_USER'     => User
+     * 'ROLE_ADMIN'    => Admin
+     * }
      *
-     *  array(3) {
-     *      'FIRST_PLACE'   => 1st Place
-     *      'SECOND_PLACE'  => 2nd Place
-     *      'THIRD_PLACE'   => 3rd Place
-     *  }
+     * array(3) {
+     * 'FIRST_PLACE'   => 1st Place
+     * 'SECOND_PLACE'  => 2nd Place
+     * 'THIRD_PLACE'   => 3rd Place
+     * }
      * </code>
      */
-    public static function getFilteredConstants($class, $pattern, $pos = false)
+    public static function getFilteredConstants(
+        $class, $pattern, $pos = false, $format = self::CONSTANTS_FORMAT_NAME_VALUE
+    )
     {
         $reflection = new \ReflectionClass($class);
         $constants  = $reflection->getConstants();
@@ -82,12 +93,14 @@ class ClassInfo
         foreach ($constants as $name => $value) {
             // Must match at the exact position
             if ($pos !== false and strpos($name, $pattern) === $pos) {
-                $filtered[$name] = $value;
+                $formatted  = self::getFormattedConstantKeyValue($name, $value, $format);
+                $filtered   = $filtered + $formatted;
             }
 
             // Must match anywhere in name
             if ($pos === false and strpos($name, $pattern) !== false) {
-                $filtered[$name] = $value;
+                $formatted  = self::getFormattedConstantKeyValue($name, $value, $format);
+                $filtered   = $filtered + $formatted;
             }
         }
 
@@ -153,5 +166,29 @@ class ClassInfo
         $reflection = new \ReflectionProperty($class, $name);
 
         return $reflection->isPublic();
+    }
+
+    /**
+     * Get a formatted constant key => value pair.
+     *
+     * @param string    $name
+     * @param mixed     $value
+     * @param string    $format
+     *
+     * @return array
+     */
+    private static function getFormattedConstantKeyValue(
+        $name, $value, $format
+    ) {
+        switch ($format) {
+            case self::CONSTANTS_FORMAT_NAME_NAME:
+                return [$name => $name];
+            case self::CONSTANTS_FORMAT_NAME_VALUE:
+                return [$name => $value];
+            case self::CONSTANTS_FORMAT_VALUE_VALUE:
+                return [$value => $value];
+        }
+
+        throw new \InvalidArgumentException('Invalid constant format given');
     }
 }
