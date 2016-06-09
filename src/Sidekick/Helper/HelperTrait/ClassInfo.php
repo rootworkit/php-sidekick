@@ -28,24 +28,26 @@ trait ClassInfo
      * @param bool|integer $pos     The exact position where $pattern
      *                              should appear. false = anywhere
      *
-     * @return array
+     * @param string       $format
+     *
+     * @return array <code>
      *
      * <code>
      * class User
      * {
-     *      use Rootwork\Sidekick\Helper\HelperTrait\ClassInfo;
+     * use Rootwork\Sidekick\Helper\HelperTrait\ClassInfo;
      *
-     *      const ROLE_GUEST    = 'Guest';
-     *      const ROLE_USER     = 'User';
-     *      const ROLE_ADMIN    = 'Admin';
+     * const ROLE_GUEST    = 'Guest';
+     * const ROLE_USER     = 'User';
+     * const ROLE_ADMIN    = 'Admin';
      *
-     *      const FIRST_PLACE   = '1st Place';
-     *      const SECOND_PLACE  = '2nd Place';
-     *      const THIRD_PLACE   = '3rd Place';
+     * const FIRST_PLACE   = '1st Place';
+     * const SECOND_PLACE  = '2nd Place';
+     * const THIRD_PLACE   = '3rd Place';
      *
-     *      const CLASS_ARISTOCRACY = 'Aristocracy';
-     *      const CLASS_PROLETARIAT = 'Proletariat';
-     *      const CLASS_PEASANTRY   = 'Peasantry';
+     * const CLASS_ARISTOCRACY = 'Aristocracy';
+     * const CLASS_PROLETARIAT = 'Proletariat';
+     * const CLASS_PEASANTRY   = 'Peasantry';
      * }
      *
      * $user = new User();
@@ -54,29 +56,32 @@ trait ClassInfo
      * var_dump(User::getFilteredConstants('_PLACE'));
      *
      * Results:
-     *  array(4) {
-     *      'ROLE_GUEST'        => Guest
-     *      'ROLE_USER'         => User
-     *      'ROLE_ADMIN'        => Admin
-     *      'CLASS_PROLETARIAT' => Proletariat
-     *  }
+     * array(4) {
+     * 'ROLE_GUEST'        => Guest
+     * 'ROLE_USER'         => User
+     * 'ROLE_ADMIN'        => Admin
+     * 'CLASS_PROLETARIAT' => Proletariat
+     * }
      *
-     *  array(3) {
-     *      'ROLE_GUEST'    => Guest
-     *      'ROLE_USER'     => User
-     *      'ROLE_ADMIN'    => Admin
-     *  }
+     * array(3) {
+     * 'ROLE_GUEST'    => Guest
+     * 'ROLE_USER'     => User
+     * 'ROLE_ADMIN'    => Admin
+     * }
      *
-     *  array(3) {
-     *      'FIRST_PLACE'   => 1st Place
-     *      'SECOND_PLACE'  => 2nd Place
-     *      'THIRD_PLACE'   => 3rd Place
-     *  }
+     * array(3) {
+     * 'FIRST_PLACE'   => 1st Place
+     * 'SECOND_PLACE'  => 2nd Place
+     * 'THIRD_PLACE'   => 3rd Place
+     * }
      * </code>
      */
-    public static function getFilteredConstants($pattern, $pos = false)
-    {
-        return Helper::getFilteredConstants(__CLASS__, $pattern, $pos);
+    public static function getFilteredConstants(
+        $pattern, $pos = false, $format = Helper::CONSTANTS_FORMAT_NAME_VALUE
+    ) {
+        return Helper::getFilteredConstants(
+            __CLASS__, $pattern, $pos, $format
+        );
     }
 
     /**
